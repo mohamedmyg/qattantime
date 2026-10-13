@@ -1,0 +1,612 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#0f2c57">
+<title>الجدول العام للمعلمين</title>
+<style>
+:root{
+  --bg:#edf1f6;--card:#fff;--ink:#0f2440;--mute:#5a6a80;--line:#d3dce8;
+  --navy:#0f2c57;--navy2:#17407c;--gold:#e9b73f;--on-navy:#f4f7fb;
+  --hl:#d6e8ff;--hl-ink:#0b4a9c;--today:#fff4d4;--now:#e9b73f;--focus:#1f6fd1;--back:#17407c;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a1424;--card:#101f36;--ink:#e7eef8;--mute:#9bafc7;--line:#22385a;--navy:#0c2447;--navy2:#1d4a91;--gold:#f0c04f;--on-navy:#f4f7fb;--hl:#173a68;--hl-ink:#9cc9ff;--today:#2c2a17;--now:#f0c04f;--focus:#7db6ff;--back:#f0c04f;color-scheme:dark;}}
+:root[data-theme="dark"]{--bg:#0a1424;--card:#101f36;--ink:#e7eef8;--mute:#9bafc7;--line:#22385a;--navy:#0c2447;--navy2:#1d4a91;--gold:#f0c04f;--on-navy:#f4f7fb;--hl:#173a68;--hl-ink:#9cc9ff;--today:#2c2a17;--now:#f0c04f;--focus:#7db6ff;--back:#f0c04f;color-scheme:dark;}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:16px/1.55 "Segoe UI","Noto Sans Arabic","Noto Naskh Arabic",Tahoma,system-ui,sans-serif;
+  }
+bdi{unicode-bidi:isolate}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:6px}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px}
+
+/* رأس الصفحة */
+.top{background:var(--navy);color:var(--on-navy);padding:18px 0 0}
+.top h1{margin:0;font-size:1.65rem;line-height:1.25;font-weight:800;letter-spacing:0}
+.top .no{display:inline-block;margin-top:8px;padding:2px 12px;background:var(--gold);color:#1a1405;border-radius:999px;font-weight:700;font-size:.9rem}
+.top .since{margin:6px 0 0;font-size:.95rem;opacity:.85}
+.tabs{display:flex;gap:4px;margin-top:16px}
+.tabs button{flex:1;padding:12px 8px;background:transparent;border:0;border-bottom:3px solid transparent;
+  color:var(--on-navy);opacity:.75;font-weight:700;cursor:pointer}
+.tabs button[aria-selected="true"]{opacity:1;border-bottom-color:var(--gold)}
+.tabs .cnt{font-weight:400;opacity:.8;margin-inline-start:6px}
+
+/* البحث والأقسام */
+.tools{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:12px 0 8px;border-bottom:1px solid var(--line)}
+.search{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--card);font-size:1rem}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:10px 0 2px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;padding:6px 14px;border:1.5px solid var(--line);border-radius:999px;background:var(--card);cursor:pointer;font-size:.92rem}
+.chip[aria-pressed="true"]{background:var(--navy2);border-color:var(--navy2);color:#fff}
+
+/* قائمة المعلمين */
+.group h2{margin:22px 0 6px;font-size:1rem;color:var(--mute);font-weight:700}
+.list{list-style:none;margin:0;padding:0;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.list li+li{border-top:1px solid var(--line)}
+.row{display:flex;align-items:center;gap:12px;padding:13px 16px;color:inherit;text-decoration:none;min-height:56px}
+.row:active{background:var(--hl)}
+.row .nm{flex:1;font-weight:700}
+.row .sub{display:block;font-weight:400;font-size:.85rem;color:var(--mute)}
+.row .n{font-size:.85rem;color:var(--mute);white-space:nowrap}
+.tag{display:inline-block;margin-inline-start:6px;padding:0 8px;border-radius:6px;background:var(--hl);color:var(--hl-ink);font-size:.78rem;font-weight:700}
+.empty{padding:28px 8px;text-align:center;color:var(--mute)}
+
+/* الفصول */
+.grade{margin:22px 0 8px;font-weight:700}
+.classes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.classes a{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:64px;padding:8px;
+  background:var(--card);border:1px solid var(--line);border-radius:12px;color:inherit;text-decoration:none;font-weight:800;font-size:1.25rem}
+.classes a small{font-weight:400;font-size:.78rem;color:var(--mute)}
+.classes a:active{background:var(--hl)}
+
+/* صفحة التفاصيل */
+.back{display:inline-flex;align-items:center;gap:6px;margin:14px 0 4px;padding:8px 12px 8px 4px;background:none;border:0;
+  color:var(--back);font-weight:700;cursor:pointer}
+.back::before{content:"";width:9px;height:9px;border:solid currentColor;border-width:2.5px 2.5px 0 0;transform:rotate(45deg);margin-inline-end:2px}
+.head h2{margin:4px 0 2px;font-size:1.5rem;line-height:1.3}
+.head .meta{color:var(--mute);font-size:.95rem}
+.now{margin:14px 0;padding:12px 14px;border-radius:12px;background:var(--card);border:1px solid var(--line);border-inline-start:6px solid var(--now);font-weight:600}
+.now.off{border-inline-start-color:var(--line);color:var(--mute);font-weight:400}
+
+.gridwrap{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+table.g{width:100%;border-collapse:collapse;table-layout:fixed}
+.g caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.g th,.g td{border:1px solid var(--line);padding:0;text-align:center;vertical-align:middle}
+.g thead th{padding:9px 2px;font-size:.82rem;background:var(--bg);font-weight:700}
+.g thead th.today{background:var(--today);box-shadow:inset 0 -3px 0 var(--now)}
+.g thead th:first-child,.g tbody th{width:19%}
+.g tbody th{padding:6px 3px;font-weight:700;font-size:.78rem;background:var(--bg);line-height:1.25}
+.g tbody th small{display:block;font-weight:400;color:var(--mute);font-size:.68rem}
+.g tbody th.cur{background:var(--today);box-shadow:inset -4px 0 0 var(--now)}
+.g td{height:50px;font-size:.78rem;line-height:1.25;padding:3px}
+.g td.today{background:var(--today)}
+.g td.c{font-weight:800;font-size:1.02rem}
+.g td.t{font-weight:600;font-size:.72rem}
+.g td.hl{background:var(--hl);color:var(--hl-ink)}
+.g td.dbl{border-top:2px solid var(--navy2)}
+.g td .d{display:block;font-weight:400;font-size:.64rem;color:var(--mute)}
+.g td.hl .d{color:inherit;opacity:.8}
+.g td.free{color:transparent}
+.foot{margin:18px 0 28px;color:var(--mute);font-size:.85rem}
+.foot p{margin:6px 0}
+.key{display:inline-block;width:14px;height:14px;border-radius:4px;background:var(--hl);border:1px solid var(--hl-ink);vertical-align:-2px;margin-inline-end:6px}
+.sum{margin:10px 2px 0;color:var(--mute);font-size:.9rem}
+
+
+
+
+/* جدول المعلم: الأيام صفوف والحصص أعمدة */
+.gt thead th{padding:6px 1px;line-height:1.2;background:var(--bg);font-size:.8rem}
+.gt thead th:first-child{width:17%}
+.gt thead th b{display:block;font-size:1rem}
+.gt thead th small{display:block;font-size:.6rem;font-weight:400;color:var(--mute);font-variant-numeric:tabular-nums}
+.gt thead th.cur{background:var(--today);box-shadow:inset 0 -3px 0 var(--now)}
+.gt tbody th{width:17%;padding:4px 3px;font-size:.8rem;background:var(--bg);font-weight:700}
+.gt tbody th.today{background:var(--today);box-shadow:inset -4px 0 0 var(--now)}
+.gt td{height:60px;padding:2px}
+.gt td.c{font-size:1rem}
+.gt td.curc{box-shadow:inset 0 0 0 2px var(--now)}
+.gt td.dbl{border-top:1px solid var(--line);border-inline-start:2px solid var(--navy2)}
+
+/* التبويبات: تمرير أفقي عند ضيق الشاشة */
+.tabs{overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{flex:1 0 auto;white-space:nowrap;padding:12px 14px}
+
+/* شريط التنبيه */
+.alert{position:fixed;inset-inline:0;top:0;z-index:50;background:var(--gold);color:#1a1405;
+  padding:calc(12px + env(safe-area-inset-top,0px)) 16px 12px;display:flex;gap:12px;align-items:center;justify-content:space-between;
+  font-weight:800;font-size:1.05rem;box-shadow:0 4px 18px rgba(0,0,0,.25)}
+.alert button{flex:none;padding:6px 14px;border-radius:8px;border:1.5px solid #1a1405;background:transparent;color:#1a1405;font-weight:700;cursor:pointer}
+
+/* تبويب تنبيهاتي */
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:14px}
+.panel h2{margin:0 0 4px;font-size:1.1rem}
+.panel p{margin:6px 0;color:var(--mute);font-size:.92rem}
+.panel label.f{display:flex;flex-direction:column;gap:6px;font-weight:700;font-size:.95rem}
+.panel select,.panel input[type=number]{width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font-size:1rem}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.chk{display:flex;gap:10px;align-items:center;padding:8px 0;font-size:.98rem}
+.chk input{width:20px;height:20px;accent-color:var(--navy2)}
+.btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.btn{padding:12px 18px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);font-weight:700;cursor:pointer;min-height:48px}
+.btn.primary{background:var(--navy2);border-color:var(--navy2);color:#fff}
+.btn.stop{background:#b3263a;border-color:#b3263a;color:#fff}
+.state{margin:12px 0 0;padding:12px 14px;border-radius:12px;background:var(--bg);color:var(--ink)!important;font-weight:600}
+.state.on{background:var(--today);border-inline-start:6px solid var(--now)}
+.hint{color:var(--mute);font-size:.86rem}
+.state:empty{display:none}
+@media (max-width:520px){.tabs .cnt{display:none}.tabs button{padding:12px 6px;font-size:.92rem}}
+.me-btn{margin:12px 0 0}
+
+/* الجدول العام (نفس شكل الجدول الأصلي) */
+.wide{max-width:none}
+.mat{overflow:auto;max-height:calc(100vh - 230px);min-height:320px;background:var(--card);border:1px solid var(--line);border-radius:14px;margin-top:12px}
+table.m{border-collapse:separate;border-spacing:0;font-size:.72rem;--cw:32px}
+.m caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.m th,.m td{height:28px;padding:0;text-align:center;border-inline-end:1px solid var(--line);border-bottom:1px solid var(--line);white-space:nowrap}
+.m td{min-width:var(--cw);font-variant-numeric:tabular-nums}
+.m thead th{position:sticky;top:0;z-index:3;background:var(--bg);font-weight:700}
+.m thead tr:nth-child(2) th{top:28px;font-weight:600;color:var(--mute)}
+.m th.nm{position:sticky;inset-inline-start:0;z-index:2;background:var(--card);text-align:start;padding:0 10px;min-width:132px;max-width:160px;overflow:hidden;text-overflow:ellipsis;font-weight:700;border-inline-end:2px solid var(--navy2)}
+.m thead th.nm{z-index:5;background:var(--bg)}
+.m th.nm a{color:inherit;text-decoration:none}
+.m tr.dep th.nm{background:var(--navy2);color:#fff}
+.m tr.dep td{background:var(--navy2)}
+.m thead th.today,.m td.today{background:var(--today)}
+.m thead th.cur{box-shadow:inset 0 -3px 0 var(--now);color:var(--ink)}
+.m td.c{font-weight:700}
+.m td.hl{background:var(--hl);color:var(--hl-ink);font-weight:800}
+.m td.dbl{box-shadow:inset 0 2px 0 var(--navy2)}
+.m .tot{min-width:40px;color:var(--mute);font-weight:700;background:var(--bg)}
+.zoomnote{margin:6px 2px 0;color:var(--mute);font-size:.85rem}
+
+@media (min-width:600px){.classes{grid-template-columns:repeat(6,1fr)}.g td{height:58px;font-size:.9rem}.g td.t{font-size:.82rem}}
+@media print{.top .tabs,.tools,.back,.foot .noprint{display:none}body{background:#fff}}
+</style>
+</head>
+<body>
+<div class="alert" id="alert" role="alert" hidden><span id="alertTxt"></span><button id="alertX" type="button">إغلاق</button></div>
+<header class="top">
+  <div class="wrap">
+    <h1>الجدول العام للمعلمين</h1>
+    <span class="no">جدول رقم 5</span>
+    <p class="since">يُعمل به من الأحد 11 أكتوبر 2026</p>
+    <div class="tabs" role="tablist">
+      <button role="tab" id="tab-t" aria-selected="true">المعلمون<span class="cnt" id="cnt-t"></span></button>
+      <button role="tab" id="tab-c" aria-selected="false">الفصول<span class="cnt" id="cnt-c"></span></button>
+      <button role="tab" id="tab-a" aria-selected="false">الجدول العام</button>
+      <button role="tab" id="tab-m" aria-selected="false">تنبيهاتي</button>
+    </div>
+  </div>
+</header>
+<main class="wrap" id="app"></main>
+<footer class="wrap foot">
+  <p><span class="key"></span>هذا جدول تجريبي استرشادي لا يعتد به</p>
+ 
+  <p>مدير المدرسة: أ/ سالم العازمي<br>المدير المساعد: أ/ محمد المطيري</p>
+</footer>
+
+<script>
+const D={"depts":["الإسلامية","اللغة العربية","اللغة الإنجليزية","الرياضيات","العلوم","الاجتماعيات","الحاسوب","الإلكترونيات","الديكور","البدنية","الموسيقى","الفنية"],"teachers":[{"i":0,"n":"محمد الفضلي","d":"الإسلامية","r":"رئيس القسم","L":[[28,1,"3/9",1],[23,1,"3/9",0],[10,1,"3/9",0]]},{"i":1,"n":"رمضان عبد الحليم","d":"الإسلامية","r":"","L":[[31,1,"2/8",1],[23,1,"2/8",0],[22,1,"6/8",0],[20,1,"6/8",1],[7,1,"6/8",0],[6,1,"2/8",0]]},{"i":2,"n":"اسماعيل محرم","d":"الإسلامية","r":"المقصف","L":[[28,1,"3/8",0],[24,1,"1/8",1],[17,1,"3/8",1],[14,1,"1/8",0],[10,1,"3/8",0],[0,1,"1/8",0]]},{"i":3,"n":"عبدالله سعد","d":"الإسلامية","r":"مشرف 9","L":[[34,1,"2/9",0],[32,1,"1/9",0],[26,1,"2/9",1],[14,1,"1/9",0],[12,1,"2/9",0],[6,1,"1/9",1]]},{"i":4,"n":"سلطان العازمي","d":"الإسلامية","r":"","L":[[34,1,"4/9",0],[33,1,"5/9",0],[26,1,"4/9",1],[17,1,"4/9",0],[8,1,"5/9",0],[6,1,"5/9",1]]},{"i":5,"n":"ناصر الحيان","d":"الإسلامية","r":"مشرف 9","L":[[32,1,"4/6",0],[29,1,"5/6",0],[27,1,"4/6",1],[26,1,"5/6",1],[20,1,"6/6",0],[17,1,"5/6",0],[10,1,"6/6",1],[9,1,"4/6",0],[0,1,"6/6",0]]},{"i":6,"n":"وليد العازمي","d":"الإسلامية","r":"","L":[[34,1,"4/7",1],[23,1,"4/7",0],[22,1,"3/7",0],[20,1,"3/7",1],[7,1,"4/7",0],[0,1,"3/7",0]]},{"i":7,"n":"فهد لافي","d":"الإسلامية","r":"مشرف 9","L":[[30,1,"4/8",0],[27,1,"5/8",0],[17,1,"5/8",1],[13,1,"4/8",1],[4,1,"4/8",0],[2,1,"5/8",0]]},{"i":8,"n":"نايف العجمي","d":"الإسلامية","r":"","L":[[28,1,"1/7",0],[21,1,"2/7",0],[20,1,"1/7",1],[13,1,"2/7",1],[11,1,"1/7",0],[5,1,"2/7",0]]},{"i":9,"n":"مبارك الجمهور","d":"الإسلامية","r":"","L":[[33,1,"5/7",0],[26,1,"6/7",0],[20,1,"5/7",1],[10,1,"6/7",0],[6,1,"6/7",1],[2,1,"5/7",0]]},{"i":10,"n":"عبد العزيز بندر","d":"الإسلامية","r":"","L":[[34,1,"2/6",1],[33,1,"3/6",0],[24,1,"1/6",0],[22,1,"2/6",0],[14,1,"3/6",1],[13,1,"3/6",0],[8,1,"1/6",1],[4,1,"2/6",0],[0,1,"1/6",0]]},{"i":11,"n":"عبد الله الدعيج","d":"اللغة العربية","r":"رئيس القسم","L":[[32,1,"4/9",0],[30,1,"4/9",0],[23,1,"4/9",0],[16,1,"4/9",0],[10,1,"4/9",0],[4,1,"4/9",0]]},{"i":12,"n":"مخلص حافظ","d":"اللغة العربية","r":"","L":[[32,1,"2/8",0],[31,1,"1/8",0],[29,1,"3/8",0],[27,1,"3/8",0],[25,1,"1/8",0],[24,1,"3/8",0],[22,1,"2/8",0],[20,1,"2/8",0],[19,1,"3/8",0],[17,1,"2/8",0],[16,1,"1/8",0],[10,1,"1/8",0],[9,1,"2/8",0],[7,1,"3/8",0],[5,1,"3/8",0],[4,1,"1/8",0],[2,1,"1/8",0],[1,1,"2/8",0]]},{"i":13,"n":"زكريا احمد","d":"اللغة العربية","r":"","L":[[30,1,"2/6",0],[28,1,"1/6",0],[25,1,"1/6",0],[23,1,"2/6",0],[19,1,"1/6",0],[17,1,"2/6",0],[14,1,"1/6",0],[13,1,"2/6",0],[10,1,"1/6",0],[6,1,"1/6",0],[5,1,"2/6",0],[2,1,"2/6",0]]},{"i":14,"n":"صبحي عبادي","d":"اللغة العربية","r":"","L":[[30,1,"5/9",0],[28,1,"1/9",0],[27,1,"5/9",0],[24,1,"1/9",0],[22,1,"1/9",0],[20,1,"1/9",0],[18,1,"5/9",0],[10,1,"1/9",0],[7,1,"5/9",0],[5,1,"5/9",0],[4,1,"1/9",0],[1,1,"5/9",0]]},{"i":15,"n":"هشام طه","d":"اللغة العربية","r":"","L":[[32,1,"2/7",0],[31,1,"1/7",0],[28,1,"2/7",0],[27,1,"2/7",0],[23,1,"1/7",0],[16,1,"1/7",0],[14,1,"2/7",0],[13,1,"1/7",0],[12,1,"2/7",0],[10,1,"1/7",0],[4,1,"2/7",0],[1,1,"1/7",0]]},{"i":16,"n":"عبدالله سالم","d":"اللغة العربية","r":"","L":[[34,1,"4/8",0],[32,1,"4/8",0],[31,1,"6/8",0],[29,1,"5/8",0],[26,1,"6/8",0],[25,1,"5/8",0],[23,1,"6/8",0],[21,1,"4/8",0],[16,1,"5/8",0],[15,1,"6/8",0],[14,1,"4/8",0],[13,1,"5/8",0],[12,1,"4/8",0],[9,1,"6/8",0],[5,1,"5/8",0],[3,1,"5/8",0],[2,1,"6/8",0],[1,1,"4/8",0]]},{"i":17,"n":"مخلص جميل","d":"اللغة العربية","r":"","L":[[32,1,"3/9",0],[31,1,"2/9",0],[29,1,"2/9",0],[27,1,"2/9",0],[25,1,"3/9",0],[20,1,"3/9",0],[18,1,"2/9",0],[17,1,"3/9",0],[9,1,"3/9",0],[7,1,"2/9",0],[4,1,"3/9",0],[1,1,"2/9",0]]},{"i":18,"n":"محمد مبارك","d":"اللغة العربية","r":"","L":[[31,1,"3/6",0],[29,1,"4/6",0],[25,1,"4/6",0],[24,1,"3/6",0],[20,1,"4/6",0],[16,1,"3/6",0],[11,1,"3/6",0],[9,1,"3/6",0],[7,1,"4/6",0],[6,1,"3/6",0],[3,1,"4/6",0],[1,1,"4/6",0]]},{"i":19,"n":"محمد خليفة","d":"اللغة العربية","r":"","L":[[30,1,"5/7",0],[28,1,"6/7",0],[25,1,"6/7",0],[24,1,"5/7",0],[20,1,"6/7",0],[16,1,"5/7",0],[15,1,"6/7",0],[13,1,"5/7",0],[11,1,"5/7",0],[9,1,"6/7",0],[5,1,"6/7",0],[0,1,"5/7",0]]},{"i":20,"n":"محمد صالح","d":"اللغة العربية","r":"","L":[[33,1,"6/6",0],[32,1,"5/6",0],[26,1,"6/6",0],[25,1,"5/6",0],[20,1,"5/6",0],[19,1,"6/6",0],[18,1,"5/6",0],[12,1,"5/6",0],[7,1,"6/6",0],[6,1,"6/6",0],[4,1,"6/6",0],[1,1,"5/6",0]]},{"i":21,"n":"عمر العتيبي","d":"اللغة العربية","r":"","L":[[30,1,"3/7",0],[28,1,"4/7",0],[26,1,"4/7",0],[25,1,"3/7",0],[19,1,"3/7",0],[15,1,"4/7",0],[14,1,"3/7",0],[13,1,"3/7",0],[12,1,"4/7",0],[6,1,"4/7",0],[2,1,"4/7",0],[1,1,"3/7",0]]},{"i":22,"n":"عدنان المطيري","d":"اللغة الإنجليزية","r":"","L":[[29,1,"1/9",0],[28,1,"2/9",0],[26,1,"1/9",0],[25,1,"2/9",0],[23,1,"2/9",0],[19,1,"2/9",0],[18,1,"1/9",0],[16,1,"1/9",0],[11,1,"1/9",0],[8,1,"2/9",0],[3,1,"1/9",0],[2,1,"2/9",0]]},{"i":23,"n":"على الاحمد","d":"اللغة الإنجليزية","r":"","L":[[33,1,"3/9",0],[32,1,"1/7",0],[27,1,"1/7",0],[22,1,"3/9",0],[19,1,"1/7",0],[18,1,"3/9",0],[14,1,"1/7",0],[13,1,"3/9",0],[11,1,"3/9",0],[9,1,"1/7",0],[2,1,"3/9",0],[0,1,"1/7",0]]},{"i":24,"n":"الدرملي تاج الدين","d":"اللغة الإنجليزية","r":"","L":[[33,1,"2/8",0],[29,1,"6/8",0],[27,1,"6/8",0],[26,1,"2/8",0],[24,1,"2/8",0],[19,1,"6/8",0],[16,1,"6/8",0],[14,1,"2/8",0],[13,1,"2/8",0],[11,1,"6/8",0],[3,1,"6/8",0],[0,1,"2/8",0]]},{"i":25,"n":"سيد عيد","d":"اللغة الإنجليزية","r":"","L":[[33,1,"4/9",0],[32,1,"5/9",0],[29,1,"4/9",0],[27,1,"4/9",0],[22,1,"5/9",0],[15,1,"5/9",0],[14,1,"4/9",0],[13,1,"5/9",0],[12,1,"4/9",0],[10,1,"5/9",0],[2,1,"4/9",0],[0,1,"5/9",0]]},{"i":26,"n":"علي حبيب","d":"اللغة الإنجليزية","r":"","L":[[32,1,"3/8",0],[28,1,"1/8",0],[23,1,"3/8",0],[21,1,"1/8",0],[20,1,"1/8",0],[18,1,"3/8",0],[15,1,"1/8",0],[12,1,"1/8",0],[11,1,"3/8",0],[8,1,"3/8",0],[6,1,"3/8",0],[3,1,"1/8",0]]},{"i":27,"n":"خالد حجيلان العازمي","d":"اللغة الإنجليزية","r":"","L":[[34,1,"5/8",0],[31,1,"4/8",0],[30,1,"5/8",0],[25,1,"4/8",0],[21,1,"5/8",0],[20,1,"4/8",0],[18,1,"4/8",0],[15,1,"5/8",0],[12,1,"5/8",0],[10,1,"4/8",0],[2,1,"4/8",0],[0,1,"5/8",0]]},{"i":28,"n":"بدر العازمي","d":"اللغة الإنجليزية","r":"","L":[[34,1,"6/7",0],[30,1,"6/7",0],[29,1,"4/7",0],[27,1,"4/7",0],[23,1,"6/7",0],[22,1,"4/7",0],[16,1,"4/7",0],[14,1,"6/7",0],[10,1,"4/7",0],[8,1,"6/7",0],[4,1,"6/7",0],[0,1,"4/7",0]]},{"i":29,"n":"حمد العنزي","d":"اللغة الإنجليزية","r":"","L":[[33,1,"2/6",0],[32,1,"3/6",0],[30,1,"3/6",0],[29,1,"1/6",0],[23,1,"1/6",0],[22,1,"3/6",0],[21,1,"2/6",0],[20,1,"1/6",0],[18,1,"2/6",0],[15,1,"3/6",0],[12,1,"2/6",0],[10,1,"3/6",0],[9,1,"2/6",0],[7,1,"1/6",0],[6,1,"2/6",0],[4,1,"3/6",0],[3,1,"1/6",0],[1,1,"1/6",0]]},{"i":30,"n":"احمد عادل","d":"اللغة الإنجليزية","r":"","L":[[33,1,"4/6",0],[31,1,"5/6",0],[30,1,"4/6",0],[28,1,"6/6",0],[27,1,"5/6",0],[26,1,"4/6",0],[24,1,"5/6",0],[22,1,"6/6",0],[16,1,"4/6",0],[15,1,"5/6",0],[14,1,"6/6",0],[11,1,"6/6",0],[10,1,"4/6",0],[7,1,"5/6",0],[6,1,"5/6",0],[4,1,"4/6",0],[3,1,"6/6",0],[1,1,"6/6",0]]},{"i":31,"n":"جمال","d":"اللغة الإنجليزية","r":"","L":[[34,1,"5/7",0],[33,1,"3/7",0],[31,1,"3/7",0],[30,1,"2/7",0],[25,1,"5/7",0],[24,1,"2/7",0],[22,1,"2/7",0],[21,1,"3/7",0],[18,1,"2/7",0],[16,1,"3/7",0],[14,1,"5/7",0],[9,1,"3/7",0],[8,1,"5/7",0],[7,1,"2/7",0],[6,1,"3/7",0],[4,1,"5/7",0],[3,1,"2/7",0],[1,1,"5/7",0]]},{"i":32,"n":"صلاح ابو العدب","d":"الرياضيات","r":"","L":[[31,1,"3/9",0],[30,1,"2/9",0],[24,1,"3/9",0],[22,1,"2/9",0],[15,1,"2/9",0],[14,1,"3/9",0],[11,1,"2/9",0],[8,1,"3/9",0],[3,1,"3/9",0],[0,1,"2/9",0]]},{"i":33,"n":"حماده احمد","d":"الرياضيات","r":"الجدول","L":[[30,1,"3/8",0],[28,1,"4/9",0],[24,1,"4/9",0],[21,1,"3/8",0],[15,1,"4/9",0],[14,1,"3/8",0],[9,1,"3/8",0],[7,1,"4/9",0],[3,1,"3/8",0],[0,1,"4/9",0]]},{"i":34,"n":"محمد بدر الحربي","d":"الرياضيات","r":"","L":[[30,1,"2/8",0],[29,1,"4/8",0],[22,1,"4/8",0],[21,1,"2/8",0],[18,1,"2/8",0],[15,1,"4/8",0],[12,1,"2/8",0],[7,1,"4/8",0],[5,1,"2/8",0],[3,1,"4/8",0]]},{"i":35,"n":"إبراهيم محمد","d":"الرياضيات","r":"","L":[[30,1,"1/9",0],[28,1,"5/8",0],[22,1,"5/8",0],[21,1,"1/9",0],[19,1,"1/9",0],[18,1,"5/8",0],[10,1,"5/8",0],[9,1,"1/9",0],[5,1,"1/9",0],[4,1,"5/8",0]]},{"i":36,"n":"شريف علي","d":"الرياضيات","r":"","L":[[32,1,"1/8",0],[31,1,"5/9",0],[22,1,"1/8",0],[21,1,"5/9",0],[17,1,"1/8",0],[14,1,"5/9",0],[12,1,"5/9",0],[11,1,"1/8",0],[5,1,"1/8",0],[3,1,"5/9",0]]},{"i":37,"n":"عادل مرزوق الرشيدي","d":"الرياضيات","r":"","L":[[29,1,"1/7",0],[28,1,"3/6",0],[26,1,"1/7",0],[25,1,"3/6",0],[18,1,"1/7",0],[17,1,"3/6",0],[12,1,"1/7",0],[8,1,"3/6",0],[4,1,"1/7",0],[0,1,"3/6",0]]},{"i":38,"n":"صالح براهمه","d":"الرياضيات","r":"","L":[[32,1,"6/8",0],[31,1,"2/7",0],[26,1,"2/7",0],[21,1,"6/8",0],[19,1,"2/7",0],[14,1,"6/8",0],[10,1,"6/8",0],[8,1,"2/7",0],[2,1,"2/7",0],[1,1,"6/8",0]]},{"i":39,"n":"خالد عز الدين","d":"الرياضيات","r":"","L":[[30,1,"6/6",0],[29,1,"3/7",0],[28,1,"4/6",0],[25,1,"6/6",0],[24,1,"3/7",0],[22,1,"4/6",0],[19,1,"4/6",0],[18,1,"3/7",0],[15,1,"6/6",0],[11,1,"4/6",0],[9,1,"6/6",0],[8,1,"3/7",0],[5,1,"6/6",0],[2,1,"3/7",0],[0,1,"4/6",0]]},{"i":40,"n":"حسام فتحي","d":"الرياضيات","r":"","L":[[32,1,"4/7",0],[30,1,"5/6",0],[29,1,"5/7",0],[24,1,"4/7",0],[22,1,"5/7",0],[21,1,"5/6",0],[19,1,"5/7",0],[17,1,"4/7",0],[16,1,"5/6",0],[9,1,"4/7",0],[8,1,"5/6",0],[7,1,"5/7",0],[5,1,"5/7",0],[2,1,"5/6",0],[1,1,"4/7",0]]},{"i":41,"n":"عثمان محمد","d":"الرياضيات","r":"","L":[[32,1,"1/6",0],[31,1,"2/6",0],[29,1,"6/7",0],[26,1,"1/6",0],[25,1,"2/6",0],[24,1,"6/7",0],[19,1,"6/7",0],[16,1,"2/6",0],[15,1,"1/6",0],[9,1,"1/6",0],[8,1,"2/6",0],[7,1,"6/7",0],[2,1,"1/6",0],[1,1,"6/7",0],[0,1,"2/6",0]]},{"i":42,"n":"رمضان سليمان","d":"العلوم","r":"","L":[[31,1,"1/9",0],[29,1,"6/6",0],[25,1,"1/9",0],[22,1,"5/6",0],[21,1,"6/6",0],[19,1,"5/6",0],[17,1,"1/9",0],[16,1,"6/6",0],[11,1,"5/6",0],[8,1,"6/6",0],[5,1,"5/6",0],[0,1,"1/9",0]]},{"i":43,"n":"احمد حمدان","d":"العلوم","r":"","L":[[33,1,"6/7",0],[30,1,"6/8",0],[28,1,"5/7",0],[25,1,"6/8",0],[24,1,"5/8",0],[22,1,"6/7",0],[18,1,"6/7",0],[17,1,"6/8",0],[15,1,"5/7",0],[14,1,"5/8",0],[12,1,"5/7",0],[11,1,"6/7",0],[9,1,"5/8",0],[4,1,"6/8",0],[3,1,"5/7",0],[1,1,"5/8",0]]},{"i":44,"n":"عمرو طه","d":"العلوم","r":"","L":[[31,1,"3/8",0],[30,1,"1/8",0],[28,1,"4/8",0],[26,1,"4/8",0],[25,1,"2/8",0],[23,1,"1/8",0],[22,1,"3/8",0],[19,1,"2/8",0],[16,1,"4/8",0],[15,1,"3/8",0],[11,1,"4/8",0],[9,1,"1/8",0],[7,1,"2/8",0],[4,1,"2/8",0],[2,1,"3/8",0],[1,1,"1/8",0]]},{"i":45,"n":"حبيب عبدالله العازمي","d":"العلوم","r":"","L":[[32,1,"2/6",0],[31,1,"1/6",0],[29,1,"3/6",0],[24,1,"2/6",0],[23,1,"4/6",0],[21,1,"3/6",0],[19,1,"2/6",0],[16,1,"1/6",0],[15,1,"4/6",0],[11,1,"1/6",0],[8,1,"4/6",0],[7,1,"3/6",0],[5,1,"3/6",0],[4,1,"1/6",0],[2,1,"4/6",0],[1,1,"2/6",0]]},{"i":46,"n":"زكي عبدالله","d":"العلوم","r":"","L":[[32,1,"2/9",0],[31,1,"4/9",0],[29,1,"3/9",0],[24,1,"2/9",0],[23,1,"5/9",0],[21,1,"3/9",0],[18,1,"4/9",0],[16,1,"5/9",0],[14,1,"2/9",0],[12,1,"3/9",0],[9,1,"5/9",0],[8,1,"4/9",0],[5,1,"3/9",0],[4,1,"2/9",0],[2,1,"5/9",0],[1,1,"4/9",0]]},{"i":47,"n":"محمد فتح الله","d":"العلوم","r":"","L":[[33,1,"4/7",0],[32,1,"3/7",0],[30,1,"1/7",0],[29,1,"2/7",0],[25,1,"2/7",0],[23,1,"3/7",0],[22,1,"1/7",0],[18,1,"4/7",0],[17,1,"3/7",0],[15,1,"1/7",0],[9,1,"2/7",0],[8,1,"4/7",0],[7,1,"3/7",0],[5,1,"4/7",0],[2,1,"1/7",0],[0,1,"2/7",0]]},{"i":48,"n":"محمد محيسن العجمي","d":"الاجتماعيات","r":"","L":[[33,1,"4/8",0],[28,1,"6/8",0],[26,1,"5/8",0],[19,1,"4/8",0],[11,1,"5/8",0],[0,1,"6/8",0]]},{"i":49,"n":"أ/احمد العازمي","d":"الاجتماعيات","r":"","L":[[31,1,"4/6",0],[29,1,"2/6",0],[23,1,"3/6",0],[18,1,"1/6",0],[14,1,"4/6",0],[12,1,"3/6",0],[5,1,"1/6",0],[3,1,"2/6",0]]},{"i":50,"n":"جراح الثويمر","d":"الاجتماعيات","r":"","L":[[34,1,"3/9",0],[33,1,"2/9",0],[26,1,"5/9",0],[25,1,"4/9",0],[19,1,"3/9",0],[13,1,"2/9",0],[11,1,"4/9",0],[4,1,"5/9",0]]},{"i":51,"n":"حمود المطيري","d":"الاجتماعيات","r":"","L":[[34,1,"6/6",0],[27,1,"6/7",0],[23,1,"5/7",0],[17,1,"6/6",0],[14,1,"5/6",0],[12,1,"6/7",0],[10,1,"5/7",0],[0,1,"5/6",0]]},{"i":52,"n":"عذبي الرشيدي","d":"الاجتماعيات","r":"","L":[[34,1,"3/7",0],[25,1,"4/7",0],[21,1,"1/7",0],[15,1,"2/7",0],[11,1,"4/7",0],[7,1,"1/7",0],[6,1,"2/7",0],[5,1,"3/7",0]]},{"i":53,"n":"عباد السوارج","d":"الاجتماعيات","r":"","L":[[29,1,"1/8",0],[27,1,"2/8",0],[23,1,"1/9",0],[20,1,"3/8",0],[18,1,"1/8",0],[8,1,"1/9",0],[4,1,"3/8",0],[2,1,"2/8",0]]},{"i":54,"n":"محمد عبد الكريم","d":"الحاسوب","r":"رئيس القسم","L":[[21,2,"4/9",0]]},{"i":55,"n":"محمد يحيى","d":"الحاسوب","r":"الجدول","L":[[28,2,"5/9",0],[24,2,"1/7",0],[15,2,"3/9",0],[9,2,"2/9",0],[1,2,"1/9",0]]},{"i":56,"n":"محمد الشمري","d":"الحاسوب","r":"","L":[[28,2,"2/8",0],[26,2,"3/7",0],[19,2,"4/7",0],[7,2,"5/8",0],[2,2,"6/7",0]]},{"i":57,"n":"بندر المطيري","d":"الحاسوب","r":"","L":[[31,2,"5/7",0],[21,2,"1/6",0],[16,2,"2/7",0],[12,2,"6/6",0],[9,2,"5/6",0],[5,2,"4/6",0]]},{"i":58,"n":"حمدي معوض","d":"الحاسوب","r":"","L":[[33,2,"6/8",0],[26,2,"3/6",0],[23,2,"4/8",0],[14,2,"2/6",0],[7,2,"1/8",0],[0,2,"3/8",0]]},{"i":59,"n":"عدنان الضاحي","d":"الإلكترونيات","r":"رئيس القسم","L":[[23,2,"6/6",0],[10,2,"2/6",0]]},{"i":60,"n":"حمد الشمري","d":"الإلكترونيات","r":"","L":[[33,2,"1/8",0],[25,2,"3/8",0],[17,2,"4/6",0],[15,2,"2/8",0],[8,2,"4/8",0],[5,2,"6/8",0],[1,2,"3/6",0]]},{"i":61,"n":"بدر العدواني","d":"الإلكترونيات","r":"","L":[[33,2,"1/8",0],[31,2,"5/8",0],[25,2,"3/8",0],[17,2,"4/6",0],[12,2,"1/6",0],[10,2,"2/6",0],[3,2,"5/6",0],[1,2,"3/6",0]]},{"i":62,"n":"حسين جاسم","d":"الإلكترونيات","r":"","L":[[31,2,"5/8",0],[23,2,"6/6",0],[15,2,"2/8",0],[12,2,"1/6",0],[8,2,"4/8",0],[5,2,"6/8",0],[3,2,"5/6",0]]},{"i":63,"n":"ناصر العازمي","d":"الديكور","r":"","L":[[33,2,"2/7",0],[19,2,"4/9",0],[10,2,"3/7",0],[0,2,"3/9",0]]},{"i":64,"n":"عبدالله عادل","d":"الديكور","r":"","L":[[33,2,"2/7",0],[26,2,"5/7",0],[16,2,"2/9",0],[3,2,"4/7",0]]},{"i":65,"n":"راشد المطرود","d":"الديكور","r":"","L":[[24,2,"5/9",0],[19,2,"4/9",0],[10,2,"3/7",0],[5,2,"1/7",0]]},{"i":66,"n":"غلاب سلطان","d":"الديكور","r":"","L":[[31,2,"6/7",0],[24,2,"5/9",0],[16,2,"2/9",0],[12,2,"1/9",0],[5,2,"1/7",0]]},{"i":67,"n":"سالم العازمي","d":"الديكور","r":"","L":[[31,2,"6/7",0],[26,2,"5/7",0],[12,2,"1/9",0],[3,2,"4/7",0],[0,2,"3/9",0]]},{"i":68,"n":"عادل الصباغة","d":"البدنية","r":"المجموعة (أ)","L":[[21,1,"2/9",0],[20,1,"2/9",0]]},{"i":69,"n":"عبدالله الدوسري","d":"البدنية","r":"","L":[[18,1,"3/6",0],[3,1,"3/6",0]]},{"i":70,"n":"فيصل الهبيدة","d":"البدنية","r":"المجموعة (أ)","L":[[18,1,"3/6",0],[3,1,"3/6",0]]},{"i":71,"n":"يوسف العجمي","d":"البدنية","r":"المجموعة (أ)","L":[[34,1,"4/6",0],[21,1,"4/6",0],[18,1,"6/8",0],[8,1,"6/8",0]]},{"i":72,"n":"سعود تركي","d":"البدنية","r":"المجموعة (ب)","L":[[17,1,"1/7",0],[8,1,"1/7",0]]},{"i":73,"n":"سلمان خالد الفضلي","d":"البدنية","r":"مشرف 6","L":[[21,1,"2/9",0],[20,1,"2/9",0]]},{"i":74,"n":"طلال عادل الحميدي","d":"البدنية","r":"","L":[[27,1,"1/9",0],[7,1,"1/9",0]]},{"i":75,"n":"نايف العتيبي","d":"البدنية","r":"","L":[[28,1,"3/7",0],[12,1,"3/7",0]]},{"i":76,"n":"محمد احمد","d":"البدنية","r":"","L":[[27,1,"1/6",0],[17,1,"1/6",0]]},{"i":77,"n":"ناصر محوش الرشيدي","d":"البدنية","r":"","L":[[18,1,"6/8",0],[8,1,"6/8",0]]},{"i":78,"n":"محمد فهد العازمي","d":"البدنية","r":"","L":[[27,1,"6/6",0],[18,1,"6/6",0]]},{"i":79,"n":"حمود عبدالله الهاملي","d":"البدنية","r":"","L":[[21,1,"5/7",0],[6,1,"5/7",0]]},{"i":80,"n":"ثامر بدر الدويلة","d":"البدنية","r":"","L":[[34,1,"5/9",0],[11,1,"5/9",0]]},{"i":81,"n":"تركي محمد","d":"البدنية","r":"","L":[[13,1,"4/9",0],[3,1,"4/9",0]]},{"i":82,"n":"فيصل عماش","d":"البدنية","r":"","L":[[30,1,"3/9",0],[6,1,"3/9",0]]},{"i":83,"n":"عبد الرحمن خالد الشمري","d":"البدنية","r":"","L":[[34,1,"3/8",0],[16,1,"3/8",0]]},{"i":84,"n":"محمد سعدي","d":"البدنية","r":"","L":[[27,1,"4/8",0],[0,1,"4/8",0]]},{"i":85,"n":"محمد المري","d":"البدنية","r":"المجموعة (ب)","L":[[20,1,"2/6",0],[7,1,"2/6",0]]},{"i":86,"n":"عبدالرحمن فارس","d":"البدنية","r":"","L":[[14,1,"4/7",0],[13,1,"4/7",0]]},{"i":87,"n":"جاسر الديحاني","d":"البدنية","r":"مشرف 6","L":[[19,1,"1/8",0],[6,1,"1/8",0]]},{"i":88,"n":"سلمان الرشيدي","d":"البدنية","r":"مشرف 6","L":[[34,1,"2/8",0],[3,1,"2/8",0]]},{"i":89,"n":"محمد لافي","d":"البدنية","r":"","L":[[28,1,"5/6",0],[13,1,"5/6",0]]},{"i":90,"n":"هاني العنزي","d":"البدنية","r":"","L":[[23,1,"2/7",0],[20,1,"2/7",0]]},{"i":91,"n":"لافي الديحاني","d":"البدنية","r":"","L":[[21,1,"6/7",0],[13,1,"6/7",0]]},{"i":92,"n":"محمد الدويلة","d":"البدنية","r":"","L":[[33,1,"5/8",0],[6,1,"5/8",0]]},{"i":93,"n":"حسين جاسم","d":"الموسيقى","r":"","L":[[30,1,"1/6",0],[28,1,"2/6",0],[24,1,"4/6",0],[23,1,"5/6",0],[17,1,"5/9",0],[15,1,"1/9",0],[9,1,"4/9",0],[7,1,"3/9",0],[3,1,"2/9",0],[2,1,"6/6",0]]},{"i":94,"n":"عبد الهادي","d":"الموسيقى","r":"","L":[[34,1,"3/6",0],[33,1,"3/8",0],[24,1,"6/8",0],[23,1,"5/8",0],[21,1,"4/7",0],[17,1,"4/8",0],[15,1,"3/7",0],[13,1,"1/8",0],[9,1,"5/7",0],[8,1,"2/8",0],[3,1,"1/7",0],[1,1,"2/7",0],[0,1,"6/7",0]]},{"i":95,"n":"محمد الشمري","d":"الفنية","r":"رئيس القسم","L":[[31,2,"6/6",0]]},{"i":96,"n":"محمد القلاف","d":"الفنية","r":"مشرف عام","L":[[33,2,"1/7",0]]},{"i":97,"n":"عمران النجار","d":"الفنية","r":"مشرف عام","L":[[3,2,"3/7",0]]},{"i":98,"n":"محمد المويزري","d":"الفنية","r":"","L":[[5,2,"2/9",0]]},{"i":99,"n":"خالد المويزري","d":"الفنية","r":"","L":[[26,2,"3/9",0]]},{"i":100,"n":"سعود نايف","d":"الفنية","r":"","L":[[5,2,"4/8",0]]},{"i":101,"n":"ناصر النمران","d":"الفنية","r":"","L":[[19,2,"5/9",0]]},{"i":102,"n":"عبد العزيز الغانم","d":"الفنية","r":"مشرف 8","L":[[5,2,"4/9",0]]},{"i":103,"n":"سعد فايز المرشاد","d":"الفنية","r":"","L":[[19,2,"5/8",0]]},{"i":104,"n":"براك الهيفي","d":"الفنية","r":"","L":[[12,2,"3/8",0]]},{"i":105,"n":"فيصل سالم","d":"الفنية","r":"مشرف 8","L":[[10,2,"2/7",0]]},{"i":106,"n":"نايف الزبني","d":"الفنية","r":"","L":[[16,2,"6/7",0]]},{"i":107,"n":"عبدالله الصانع","d":"الفنية","r":"مشرف 8","L":[[17,2,"5/7",0]]},{"i":108,"n":"سعد العازمي","d":"الفنية","r":"","L":[[12,2,"6/8",0]]},{"i":109,"n":"على العنزي","d":"الفنية","r":"","L":[[33,2,"1/6",0],[19,2,"3/6",0]]},{"i":110,"n":"سعود الخالدي","d":"الفنية","r":"","L":[[30,2,"4/7",0]]},{"i":111,"n":"راضي الشمري","d":"الفنية","r":"مشرف 8","L":[[26,2,"1/8",0],[10,2,"2/8",0]]},{"i":112,"n":"عايد العازمي","d":"الفنية","r":"","L":[[26,2,"2/6",0],[12,2,"4/6",0]]},{"i":113,"n":"نافل الدويله","d":"الفنية","r":"","L":[[33,2,"5/6",0]]},{"i":114,"n":"حمود عبدالله","d":"الفنية","r":"مشرف 8","L":[[33,2,"1/9",0]]}]};
+const DAYS=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس'];
+const PN=['الأولى','الثانية','الثالثة','الرابعة','الخامسة','السادسة','السابعة'];
+const TM=[[460,505],[510,555],[570,615],[620,665],[670,715],[725,770],[775,820]];
+const hm=m=>Math.floor(m/60)%12||12,hmm=m=>String(m%60).padStart(2,'0');
+const tstr=m=>hm(m)+':'+hmm(m);
+const T=D.teachers, DEPTS=D.depts;
+const norm=s=>s.replace(/[ً-ْـ]/g,'').replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').replace(/\s+/g,' ').trim().toLowerCase();
+T.forEach(t=>t.k=norm(t.n+' '+t.d+' '+t.r));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const lab=l=>'<bdi dir="ltr">'+esc(l)+'</bdi>';
+const $=s=>document.querySelector(s);
+const app=$('#app');
+
+// فهرس الفصول: لكل فصل، قائمة الحصص من كل المعلمين
+const CLS={};
+T.forEach(t=>t.L.forEach(([c,sp,l,b])=>{for(let k=0;k<sp;k++)(CLS[l]=CLS[l]||{})[c+k]=(CLS[l][c+k]||[]).concat([{t,b,dbl:sp>1}]);}));
+const classKeys=Object.keys(CLS).sort((a,b)=>{const[x1,y1]=a.split('/').map(Number),[x2,y2]=b.split('/').map(Number);return y1-y2||x1-x2});
+const GRADE={6:'السادس',7:'السابع',8:'الثامن',9:'التاسع'};
+$('#cnt-t').textContent=T.length;$('#cnt-c').textContent=classKeys.length;
+
+let q='',dept='',lastY=0;
+
+const KF=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Kuwait',weekday:'short',year:'numeric',month:'numeric',day:'numeric',hour:'numeric',minute:'numeric',second:'numeric',hourCycle:'h23'});
+const WD={Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6};
+function kw(){const o={};KF.formatToParts(new Date()).forEach(p=>o[p.type]=p.value);
+  return {day:WD[o.weekday],y:+o.year,mo:+o.month,d:+o.day,h:+o.hour,m:+o.minute,s:+o.second}}
+function nowInfo(){
+  const k=kw(),m=k.h*60+k.m,school=k.day>=0&&k.day<=4;
+  let p=-1;if(school)TM.forEach((x,i)=>{if(m>=x[0]&&m<x[1])p=i});
+  return {day:school?k.day:-1,m,p};
+}
+
+/* ---------- القوائم ---------- */
+function viewTeachers(){
+  const chips=['<button class="chip" aria-pressed="'+(dept===''?'true':'false')+'" data-d="">الكل</button>']
+    .concat(DEPTS.map(x=>'<button class="chip" aria-pressed="'+(dept===x?'true':'false')+'" data-d="'+esc(x)+'">'+esc(x)+'</button>')).join('');
+  app.innerHTML='<div class="tools"><input class="search" type="search" id="q" placeholder="ابحث عن معلم" autocomplete="off" value="'+esc(q)+'" aria-label="ابحث عن معلم"><div class="chips">'+chips+'</div></div><div id="res"></div>';
+  $('#q').addEventListener('input',e=>{q=e.target.value;renderList()});
+  app.querySelectorAll('.chip').forEach(b=>b.addEventListener('click',()=>{dept=b.dataset.d;
+    app.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));renderList()}));
+  renderList();
+}
+function renderList(){
+  const nq=norm(q);let html='',n=0;
+  DEPTS.forEach(dp=>{
+    if(dept&&dept!==dp)return;
+    const rows=T.filter(t=>t.d===dp&&(!nq||t.k.includes(nq)));
+    if(!rows.length)return;n+=rows.length;
+    html+='<section class="group"><h2>'+esc(dp)+'</h2><ul class="list">'+rows.map(t=>
+      '<li><a class="row" href="#t'+t.i+'"><span class="nm">'+esc(t.n)+(t.r?'<span class="tag">'+esc(t.r)+'</span>':'')+'</span><span class="n">'+total(t)+' حصة</span></a></li>').join('')+'</ul></section>';
+  });
+  $('#res').innerHTML=n?html:'<p class="empty">لا يوجد معلم بهذا الاسم. جرّب جزءًا آخر من الاسم.</p>';
+}
+const total=t=>t.L.reduce((s,l)=>s+l[1],0);
+
+function viewClasses(){
+  let html='';
+  [6,7,8,9].forEach(g=>{
+    const ks=classKeys.filter(k=>+k.split('/')[1]===g);if(!ks.length)return;
+    html+='<h2 class="grade">الصف '+GRADE[g]+'</h2><div class="classes">'+ks.map(k=>'<a href="#c'+k.replace('/','-')+'">'+lab(k)+'<small>فصل '+k.split('/')[0]+'</small></a>').join('')+'</div>';
+  });
+  app.innerHTML='<div style="height:6px"></div>'+html;
+}
+
+/* ---------- الجدول الأسبوعي ---------- */
+function grid(cellFn,info,teacherMode){
+  // cellFn(col) => {html,cls,span} أو null
+  let h='<div class="gridwrap"><table class="g"><caption>الجدول الأسبوعي</caption><thead><tr><th scope="col">الحصة</th>';
+  DAYS.forEach((d,i)=>h+='<th scope="col"'+(i===info.day?' class="today"':'')+'>'+d+'</th>');
+  h+='</tr></thead><tbody>';
+  const skip={};
+  for(let p=0;p<7;p++){
+    h+='<tr><th scope="row"'+(p===info.p?' class="cur"':'')+'>'+PN[p]+'<small><bdi dir="ltr">'+tstr(TM[p][0])+'–'+tstr(TM[p][1])+'</bdi></small></th>';
+    for(let d=0;d<5;d++){
+      const col=d*7+p;if(skip[col])continue;
+      const c=cellFn(col),td=d===info.day?' today':'';
+      if(!c){h+='<td class="free'+td+'">–</td>';continue}
+      if(c.span>1)for(let k=1;k<c.span;k++)skip[col+k]=1;
+      h+='<td class="'+(c.cls||'')+td+(c.hl?' hl':'')+(c.span>1?' dbl':'')+'"'+(c.span>1?' rowspan="'+c.span+'"':'')+'>'+c.html+'</td>';
+    }
+    h+='</tr>';
+  }
+  return h+'</tbody></table></div>';
+}
+
+
+function gridT(at,info){
+  let h='<div class="gridwrap"><table class="g gt"><caption>الجدول الأسبوعي</caption><thead><tr><th scope="col">اليوم</th>';
+  for(let p=0;p<7;p++)h+='<th scope="col"'+(p===info.p?' class="cur"':'')+' title="الحصة '+PN[p]+'"><b>'+(p+1)+'</b><small><bdi dir="ltr">'+tstr(TM[p][0])+'</bdi></small><small><bdi dir="ltr">'+tstr(TM[p][1])+'</bdi></small></th>';
+  h+='</tr></thead><tbody>';
+  for(let d=0;d<5;d++){
+    h+='<tr><th scope="row"'+(d===info.day?' class="today"':'')+'>'+DAYS[d]+'</th>';
+    const skip={};
+    for(let p=0;p<7;p++){
+      const col=d*7+p;if(skip[col])continue;
+      const x=at[col],cls=(d===info.day?' today':'')+(p===info.p&&d===info.day?' curc':'');
+      if(!x){h+='<td class="free'+cls+'"></td>';continue}
+      for(let k=1;k<x.sp;k++)skip[col+k]=1;
+      h+='<td class="c'+cls+(x.b?' hl':'')+(x.sp>1?' dbl':'')+'"'+(x.sp>1?' colspan="'+x.sp+'"':'')+'>'+lab(x.l)+'</td>';
+    }
+    h+='</tr>';
+  }
+  return h+'</tbody></table></div>';
+}
+
+function viewTeacher(i){
+  const t=T[i];if(!t)return viewTeachers();
+  const info=nowInfo(),at={};
+  t.L.forEach(([c,sp,l,b])=>at[c]={l,sp,b});
+  const g=gridT(at,info);
+  // حالة الآن
+  let msg='لا توجد حصص اليوم. هذا يوم إجازة.',off=true;
+  if(info.day>=0){
+    const mine=[];for(let p=0;p<7;p++){const x=at[info.day*7+p];if(x)mine.push({p,x})}
+    const cur=info.p>=0?mine.find(o=>o.p<=info.p&&info.p<o.p+o.x.sp):null;
+    const next=mine.find(o=>TM[o.p][0]>info.m);
+    if(cur){msg='الآن: الحصة '+PN[info.p]+' مع الفصل '+lab(cur.x.l);off=false}
+    else if(next){msg='حصتك التالية: الحصة '+PN[next.p]+' الساعة '+'<bdi dir="ltr">'+tstr(TM[next.p][0])+'</bdi>'+' مع الفصل '+lab(next.x.l);off=false}
+    else msg='انتهت حصصك لهذا اليوم.';
+  }
+  app.innerHTML='<button class="back" id="back">رجوع</button><div class="head"><h2>'+esc(t.n)+'</h2><div class="meta">'+esc(t.d)+(t.r?'، '+esc(t.r):'')+'</div></div>'+
+    '<div class="now'+(off?' off':'')+'">'+msg+'</div>'+g+'<p class="sum">'+total(t)+' حصة في الأسبوع</p>'+'<button class="btn me-btn" id="iam" type="button">هذا أنا: فعّل تنبيهات حصصي</button>';
+  $('#back').addEventListener('click',goBack);
+  $('#iam').addEventListener('click',()=>{me=t.i;LS.set('tt.me',mkey(t));location.hash='me'});
+}
+
+function viewClass(key){
+  if(!CLS[key])return viewClasses();
+  const info=nowInfo(),at=CLS[key];
+  const g=grid(col=>{
+    const xs=at[col];if(!xs)return null;
+    return {cls:'t',hl:xs.some(x=>x.b),span:1,html:xs.map(x=>'<span>'+esc(x.t.n)+'</span>'+'<span class="d">'+esc(x.t.d)+'</span>').join('<hr style="border:0;border-top:1px solid var(--line);margin:3px 0">')};
+  },info,false);
+  let msg='لا توجد حصص اليوم. هذا يوم إجازة.',off=true;
+  if(info.day>=0){
+    if(info.p>=0){const xs=at[info.day*7+info.p];
+      if(xs){msg='الآن: الحصة '+PN[info.p]+' مع '+xs.map(x=>esc(x.t.n)).join(' و');off=false}
+      else{msg='الآن: لا توجد حصة مسجلة لهذا الفصل في الحصة '+PN[info.p]+'.'}}
+    else msg='لا توجد حصة جارية الآن.';
+  }
+  const cnt=Object.keys(at).length;
+  app.innerHTML='<button class="back" id="back">رجوع</button><div class="head"><h2>الفصل '+lab(key)+'</h2><div class="meta">الصف '+GRADE[+key.split('/')[1]]+'، فصل '+key.split('/')[0]+'</div></div>'+
+    '<div class="now'+(off?' off':'')+'">'+msg+'</div>'+g+'<p class="sum">'+cnt+' حصة في الأسبوع. عند اشتراك أكثر من معلم في الحصة تُعرض الأسماء معًا.</p>';
+  $('#back').addEventListener('click',goBack);
+}
+
+
+/* ---------- الجدول العام ---------- */
+let zi=1;const CWS=[26,32,38,46];
+function viewAll(){
+  app.innerHTML='<div class="tools"><input class="search" type="search" id="q" placeholder="ابحث عن معلم" autocomplete="off" value="'+esc(q)+'" aria-label="ابحث عن معلم">'+
+    '<div class="chips" id="jump">'+DAYS.map((d,i)=>'<button class="chip" data-day="'+i+'">'+d+'</button>').join('')+
+    '<button class="chip" id="zin" aria-label="تكبير الجدول">تكبير +</button><button class="chip" id="zout" aria-label="تصغير الجدول">تصغير −</button></div></div><div id="mat"></div>'+
+    '<p class="zoomnote">مرّر الجدول بإصبعك يمينًا ويسارًا وأعلى وأسفل. اسم المعلم والأيام يبقيان ظاهرين. اضغط اسم المعلم لفتح جدوله.</p>';
+  $('#q').addEventListener('input',e=>{q=e.target.value;renderMat()});
+  $('#jump').addEventListener('click',e=>{
+    const b=e.target.closest('button');if(!b)return;
+    if(b.id==='zin'){zi=Math.min(CWS.length-1,zi+1);renderMat();return}
+    if(b.id==='zout'){zi=Math.max(0,zi-1);renderMat();return}
+    const el=$('#dh'+b.dataset.day);if(el)el.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
+  });
+  renderMat();
+}
+function renderMat(){
+  const info=nowInfo(),nq=norm(q);
+  let h='<div class="mat"><table class="m" style="--cw:'+CWS[zi]+'px"><caption>الجدول العام للمعلمين</caption><thead><tr><th class="nm" rowspan="2" scope="col">المعلم</th>';
+  DAYS.forEach((d,i)=>h+='<th colspan="7" id="dh'+i+'" scope="colgroup"'+(i===info.day?' class="today"':'')+'>'+d+'</th>');
+  h+='<th rowspan="2" class="tot" scope="col">حصص</th></tr><tr>';
+  for(let d=0;d<5;d++)for(let p=0;p<7;p++){
+    const c=d===info.day?(p===info.p?' class="today cur"':' class="today"'):'';
+    h+='<th scope="col"'+c+' title="الحصة '+PN[p]+'">'+(p+1)+'</th>';
+  }
+  h+='</tr></thead><tbody>';
+  let n=0;
+  DEPTS.forEach(dp=>{
+    const rows=T.filter(t=>t.d===dp&&(!nq||t.k.includes(nq)));if(!rows.length)return;
+    h+='<tr class="dep"><th class="nm" scope="row">'+esc(dp)+'</th><td colspan="36"></td></tr>';
+    rows.forEach(t=>{
+      n++;const at={},skip={};t.L.forEach(([c,sp,l,b])=>at[c]={l,sp,b});
+      h+='<tr><th class="nm" scope="row"><a href="#t'+t.i+'">'+esc(t.n)+'</a></th>';
+      for(let d=0;d<5;d++)for(let p=0;p<7;p++){
+        const col=d*7+p;if(skip[col])continue;
+        const x=at[col],td=d===info.day?' today':'';
+        if(!x){h+='<td class="'+td.trim()+'"></td>';continue}
+        for(let k=1;k<x.sp;k++)skip[col+k]=1;
+        h+='<td class="c'+td+(x.b?' hl':'')+(x.sp>1?' dbl':'')+'"'+(x.sp>1?' colspan="'+x.sp+'"':'')+'>'+lab(x.l)+'</td>';
+      }
+      h+='<td class="tot">'+total(t)+'</td></tr>';
+    });
+  });
+  h+='</tbody></table></div>';
+  $('#mat').innerHTML=n?h:'<p class="empty">لا يوجد معلم بهذا الاسم. جرّب جزءًا آخر من الاسم.</p>';
+}
+
+
+/* ---------- تنبيهاتي ---------- */
+const ART=/*ART*/false;
+const LS={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+let me=-1,on=false;const fired={};
+const cfg={bs:5,be:5,sound:true,vib:true,notif:false,wake:true};
+try{const c=JSON.parse(LS.get('tt.cfg')||'null');if(c)Object.assign(cfg,c)}catch(e){}
+const mkey=t=>t.n+'|'+t.d;
+{const i=T.findIndex(t=>mkey(t)===LS.get('tt.me'));if(i>=0)me=i}
+const saveCfg=()=>LS.set('tt.cfg',JSON.stringify(cfg));
+const minWord=n=>n===1?'دقيقة':n===2?'دقيقتين':n<=10?n+' دقائق':n+' دقيقة';
+const pad2=n=>String(n).padStart(2,'0');
+
+// أحداث التنبيه لمعلم في يوم معين
+function eventsFor(t,day){
+  const ev=[];
+  t.L.forEach(([c,sp,l,b])=>{
+    if(Math.floor(c/7)!==day)return;
+    const p=c%7,p2=p+sp-1,S=TM[p][0]*60,E=TM[p2][1]*60;
+    ev.push({id:'s'+c,kind:'s',t:S-cfg.bs*60,at:S,min:cfg.bs,p,p2,l,sp});
+    ev.push({id:'e'+c,kind:'e',t:E-cfg.be*60,at:E,min:cfg.be,p,p2,l,sp});
+  });
+  return ev.sort((a,b)=>a.t-b.t);
+}
+function evText(e){
+  if(e.kind==='s')return e.min>0?'تبدأ الحصة '+PN[e.p]+' بعد '+minWord(e.min)+' مع الفصل '+e.l:'بدأت الحصة '+PN[e.p]+' الآن مع الفصل '+e.l;
+  return e.min>0?'تنتهي الحصة '+PN[e.p2]+' بعد '+minWord(e.min):'انتهت الحصة '+PN[e.p2]+' الآن';
+}
+
+// الصوت
+let AC=null;
+function audio(){if(!AC){const C=window.AudioContext||window.webkitAudioContext;if(C){try{AC=new C()}catch(e){}}}return AC}
+function beep(f,t,d){const c=audio();if(!c)return;const o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.value=f;
+  g.gain.setValueAtTime(0.0001,c.currentTime+t);g.gain.linearRampToValueAtTime(.55,c.currentTime+t+.03);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+t+d);
+  o.connect(g);g.connect(c.destination);o.start(c.currentTime+t);o.stop(c.currentTime+t+d+.05)}
+function chime(kind){if(kind==='s'){beep(880,0,.5);beep(1175,.55,.9)}else{beep(660,0,.5);beep(520,.55,1)}}
+
+// شريط التنبيه
+let bannerT;
+function banner(txt){const b=$('#alert');$('#alertTxt').textContent=txt;b.hidden=false;clearTimeout(bannerT);bannerT=setTimeout(()=>{b.hidden=true},60000)}
+$('#alertX').addEventListener('click',()=>{$('#alert').hidden=true});
+
+function fire(e,testing){
+  const txt=testing?'هذا تنبيه تجريبي. هكذا سيصلك تنبيه الحصة.':evText(e);
+  banner(txt);
+  if(cfg.sound)chime(e.kind);
+  if(cfg.vib&&navigator.vibrate){try{navigator.vibrate([300,150,300])}catch(x){}}
+  if(cfg.notif&&'Notification' in window&&Notification.permission==='granted'){
+    try{new Notification('الجدول العام للمعلمين',{body:txt,tag:e.id||'test',lang:'ar',dir:'rtl'})}catch(x){}
+  }
+}
+
+// منع نوم الشاشة
+let wl=null;
+async function wake(){try{if(cfg.wake&&on&&!wl&&'wakeLock' in navigator&&document.visibilityState==='visible'){
+  wl=await navigator.wakeLock.request('screen');wl.addEventListener('release',()=>{wl=null})}}catch(e){wl=null}}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')wake()});
+
+async function setOn(v){
+  on=v;
+  if(v){
+    const c=audio();if(c&&c.state==='suspended'){try{await c.resume()}catch(e){}}
+    beep(1,0,.01);
+    if(cfg.notif&&'Notification' in window&&Notification.permission==='default'){try{await Notification.requestPermission()}catch(e){}}
+    wake();
+  }else if(wl){try{wl.release()}catch(e){}wl=null}
+  updMe();
+}
+
+// المحرّك: يعمل كل ثانية
+function engine(){
+  if(on&&me>=0){
+    const k=kw();if(k.day<=4){
+      const ns=k.h*3600+k.m*60+k.s,dk=k.y+'-'+k.mo+'-'+k.d;
+      eventsFor(T[me],k.day).forEach(e=>{
+        const key=dk+':'+e.id;
+        if(ns>=e.t&&ns<e.t+45&&!fired[key]){fired[key]=1;fire(e)}
+      });
+    }
+  }
+  updMe();
+}
+function updMe(){
+  const st=$('#meState'),nx=$('#meNext'),go=$('#go');
+  if(go){go.textContent=on?'إيقاف التنبيهات':'تشغيل التنبيهات';go.className='btn '+(on?'stop':'primary')}
+  if(!st||!nx)return;
+  if(me<0){st.textContent='';nx.textContent='';return}
+  st.className='state'+(on?' on':'');
+  st.textContent=on?'التنبيهات تعمل. أبقِ هذه الصفحة مفتوحة والشاشة مضاءة حتى تصلك التنبيهات.':'التنبيهات متوقفة. اضغط «تشغيل التنبيهات» لبدئها.';
+  const k=kw();
+  if(k.day>4){nx.textContent='اليوم إجازة، لا توجد تنبيهات.';return}
+  const ns=k.h*3600+k.m*60+k.s,e=eventsFor(T[me],k.day).find(x=>x.t>ns);
+  if(!e){nx.textContent='لا توجد تنبيهات متبقية اليوم.';return}
+  const left=Math.ceil((e.t-ns)/60);
+  nx.textContent='التنبيه القادم الساعة '+tstr(Math.floor(e.t/60))+' (بعد '+(left>=60?Math.floor(left/60)+' ساعة و'+(left%60)+' دقيقة':minWord(left))+'): '+evText(e);
+}
+
+/* ---- ملف التقويم ---- */
+const ENC=new TextEncoder();
+function fold(line){const out=[];let cur='',by=0;for(const ch of line){const b=ENC.encode(ch).length;if(by+b>72){out.push(cur);cur=' '+ch;by=1+b}else{cur+=ch;by+=b}}out.push(cur);return out.join('\r\n')}
+const ie=s=>String(s).replace(/\\/g,'\\\\').replace(/;/g,'\;').replace(/,/g,'\\,').replace(/\n/g,'\\n');
+function buildICS(t,weeks){
+  const k=kw();
+  let base=new Date(Date.UTC(k.y,k.mo-1,k.d));base.setUTCDate(base.getUTCDate()-k.day+(k.day>=5?7:0));
+  const start0=new Date(Date.UTC(2026,9,11));if(base<start0)base=start0;
+  const dstr=(dt,mins)=>dt.getUTCFullYear()+pad2(dt.getUTCMonth()+1)+pad2(dt.getUTCDate())+'T'+pad2(Math.floor(mins/60))+pad2(mins%60)+'00';
+  const now=new Date(),stamp=now.getUTCFullYear()+pad2(now.getUTCMonth()+1)+pad2(now.getUTCDate())+'T'+pad2(now.getUTCHours())+pad2(now.getUTCMinutes())+pad2(now.getUTCSeconds())+'Z';
+  const L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//School Timetable//AR//','CALSCALE:GREGORIAN','X-WR-CALNAME:'+ie('حصص '+t.n),'X-WR-TIMEZONE:Asia/Kuwait',
+    'BEGIN:VTIMEZONE','TZID:Asia/Kuwait','BEGIN:STANDARD','DTSTART:19700101T000000','TZOFFSETFROM:+0300','TZOFFSETTO:+0300','TZNAME:AST','END:STANDARD','END:VTIMEZONE'];
+  let n=0;
+  t.L.forEach(([c,sp,l,b])=>{
+    const day=Math.floor(c/7),p=c%7,p2=p+sp-1,S=TM[p][0],E=TM[p2][1];
+    const dt=new Date(base.getTime());dt.setUTCDate(dt.getUTCDate()+day);
+    const title='الحصة '+PN[p]+(sp>1?' والتي تليها':'')+' مع الفصل '+l;
+    // 1) الحصة نفسها مع تنبيه قبل البداية
+    L.push('BEGIN:VEVENT','UID:tt5-'+t.i+'-'+c+'-lesson@school-timetable','DTSTAMP:'+stamp,
+      'DTSTART;TZID=Asia/Kuwait:'+dstr(dt,S),'DTEND;TZID=Asia/Kuwait:'+dstr(dt,E),'RRULE:FREQ=WEEKLY;COUNT='+weeks,
+      'SUMMARY:'+ie(title),'DESCRIPTION:'+ie('الجدول العام رقم 5. '+t.n+'، '+t.d),
+      'BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+ie(evText({kind:'s',min:cfg.bs,p,p2,l})),'TRIGGER:'+(cfg.bs>0?'-PT'+cfg.bs+'M':'PT0S'),'END:VALARM','END:VEVENT');
+    // 2) تنبيه قرب نهاية الحصة (حدث قصير مع تنبيه عند وقته)
+    const ET=E-cfg.be;
+    L.push('BEGIN:VEVENT','UID:tt5-'+t.i+'-'+c+'-end@school-timetable','DTSTAMP:'+stamp,
+      'DTSTART;TZID=Asia/Kuwait:'+dstr(dt,ET),'DTEND;TZID=Asia/Kuwait:'+dstr(dt,ET+1),'RRULE:FREQ=WEEKLY;COUNT='+weeks,
+      'SUMMARY:'+ie(evText({kind:'e',min:cfg.be,p,p2,l})),'DESCRIPTION:'+ie('تنبيه نهاية الحصة. '+t.n),
+      'BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+ie(evText({kind:'e',min:cfg.be,p,p2,l})),'TRIGGER:PT0S','END:VALARM','END:VEVENT');
+    n+=2;
+  });
+  L.push('END:VCALENDAR');
+  return {text:L.map(fold).join('\r\n')+'\r\n',count:n};
+}
+let DLC=null;
+if(ART&&window.claude&&claude.use){claude.use('downloads').then(x=>{DLC=x;const b=document.getElementById('ics');if(b&&!x){b.closest('.btns').hidden=true;const m=document.getElementById('icsMsg');if(m)m.textContent='التنزيل غير متاح هنا. افتح الموقع المستقل (index.html) لتنزيل ملف التقويم.'}}).catch(()=>{})}
+async function dlICS(){
+  const w=Math.max(1,Math.min(40,parseInt($('#weeks').value,10)||12));
+  const r=buildICS(T[me],w);
+  const msg=$('#icsMsg');
+  if(ART){
+    if(!DLC){msg.textContent='التنزيل غير متاح هنا. افتح الموقع المستقل (index.html).';return}
+    try{await DLC.save({filename:'my-lessons.ics',data:r.text});msg.textContent='تم تنزيل ملف التقويم. افتحه الآن بتطبيق التقويم واختر إضافة الكل.'}
+    catch(e){msg.textContent=(e&&e.code==='declined')?'تم إلغاء التنزيل.':(e&&e.code==='rejected_extension')?'هذه البيئة لا تسمح بملفات ics. افتح الموقع المستقل (index.html).':'تعذر التنزيل هنا. افتح الموقع المستقل (index.html).'}
+    return;
+  }
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([r.text],{type:'text/calendar;charset=utf-8'}));
+  a.download='my-lessons.ics';document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),5000);
+  msg.textContent='تم تنزيل ملف التقويم. افتحه الآن بتطبيق التقويم واختر إضافة الكل.';
+}
+
+function viewMe(){
+  const opt=(arr,v)=>arr.map(x=>'<option value="'+x+'"'+(x===v?' selected':'')+'>'+(x===0?'عند البداية/النهاية تمامًا':minWord(x))+'</option>').join('');
+  const who=DEPTS.map(dp=>'<optgroup label="'+esc(dp)+'">'+T.filter(t=>t.d===dp).map(t=>'<option value="'+t.i+'"'+(t.i===me?' selected':'')+'>'+esc(t.n)+'</option>').join('')+'</optgroup>').join('');
+  const cal='<label class="f" for="weeks">عدد الأسابيع التي تُضاف</label><input type="number" id="weeks" min="1" max="40" value="12" inputmode="numeric">'+
+    '<div class="btns"><button class="btn primary" id="ics" type="button">تنزيل ملف التقويم</button></div><p class="state" id="icsMsg" style="margin-top:10px"></p>'+
+    '<p class="hint">على iPhone: افتح الملف بعد التنزيل ثم اختر «إضافة الكل». على Android: افتحه بتطبيق التقويم. تصل التنبيهات من تطبيق التقويم نفسه ولو كان المتصفح مغلقًا. اضبط تنبيهات التقويم على الصوت من إعدادات هاتفك.</p>';
+  app.innerHTML=
+   '<div class="panel"><h2>اختر اسمك</h2><p>ستصلك تنبيهات حصصك أنت فقط.</p><label class="f" for="who">المعلم</label><select id="who"><option value="">اختر اسمك من القائمة</option>'+who+'</select></div>'+
+   '<div id="cfgWrap"></div>';
+  $('#who').addEventListener('change',e=>{me=e.target.value===''?-1:+e.target.value;fired&&Object.keys(fired).forEach(k=>delete fired[k]);
+    LS.set('tt.me',me>=0?mkey(T[me]):'');if(me<0&&on)setOn(false);drawCfg()});
+  drawCfg();
+  function drawCfg(){
+    const w=$('#cfgWrap');
+    if(me<0){w.innerHTML='';return}
+    w.innerHTML=
+     '<div class="panel"><h2>التنبيهات داخل الصفحة</h2><p>تعمل والصفحة مفتوحة على شاشة مضاءة.</p>'+
+     '<div class="fields"><label class="f" for="bs">قبل بداية الحصة بـ<select id="bs">'+opt([0,5,10,15],cfg.bs)+'</select></label>'+
+     '<label class="f" for="be">قبل نهاية الحصة بـ<select id="be">'+opt([0,5,10],cfg.be)+'</select></label></div>'+
+     '<label class="chk"><input type="checkbox" id="c-sound"'+(cfg.sound?' checked':'')+'>صوت التنبيه</label>'+
+     '<label class="chk"><input type="checkbox" id="c-vib"'+(cfg.vib?' checked':'')+'>اهتزاز الهاتف (يعمل على أندرويد فقط)</label>'+
+     '<label class="chk"><input type="checkbox" id="c-notif"'+(cfg.notif?' checked':'')+'>إشعار النظام (حيث يدعمه المتصفح)</label>'+
+     '<label class="chk"><input type="checkbox" id="c-wake"'+(cfg.wake?' checked':'')+'>إبقاء الشاشة مضاءة أثناء التشغيل</label>'+
+     '<div class="btns"><button class="btn primary" id="go" type="button"></button><button class="btn" id="test" type="button">تجربة التنبيه</button></div>'+
+     '<p class="state" id="meState"></p><p class="hint" id="meNext" style="margin:8px 2px 0"></p></div>'+
+     '<div class="panel"><h2>التنبيهات والمتصفح مغلق</h2><p>أضف حصصك إلى تقويم هاتفك فتصلك التنبيهات من التطبيق نفسه، حتى لو أغلقت الصفحة أو قفلت الشاشة.</p>'+cal+'</div>'+
+     '<p class="hint" style="margin:14px 2px">المتصفح على الهاتف يوقف الصفحات عندما تُغلق أو تُقفل الشاشة، ولذلك لا تصل تنبيهات الصفحة إلا وهي مفتوحة. التقويم هو الطريقة المضمونة.</p>';
+    $('#bs').addEventListener('change',e=>{cfg.bs=+e.target.value;saveCfg();updMe()});
+    $('#be').addEventListener('change',e=>{cfg.be=+e.target.value;saveCfg();updMe()});
+    [['sound','c-sound'],['vib','c-vib'],['notif','c-notif'],['wake','c-wake']].forEach(([k,id])=>$('#'+id).addEventListener('change',async e=>{
+      cfg[k]=e.target.checked;saveCfg();
+      if(k==='notif'&&cfg.notif){
+        if(!('Notification' in window)){e.target.checked=cfg.notif=false;saveCfg();$('#meState').textContent='هذا المتصفح لا يدعم إشعارات النظام. سيظهر الشريط الأصفر والصوت فقط.';return}
+        if(Notification.permission==='default'){try{await Notification.requestPermission()}catch(x){}}
+        if(Notification.permission!=='granted'){e.target.checked=cfg.notif=false;saveCfg();$('#meState').textContent='لم يُسمح بالإشعارات. فعّلها من إعدادات المتصفح لهذا الموقع.'}
+      }
+      if(k==='wake'){if(cfg.wake)wake();else if(wl){try{wl.release()}catch(x){}wl=null}}
+    }));
+    $('#go').addEventListener('click',()=>setOn(!on));
+    $('#test').addEventListener('click',async()=>{const c=audio();if(c&&c.state==='suspended'){try{await c.resume()}catch(x){}}fire({kind:'s',id:'test'},true)});
+    const ib=$('#ics');if(ib)ib.addEventListener('click',dlICS);
+    updMe();
+  }
+}
+setInterval(engine,1000);
+
+/* ---------- التنقل ---------- */
+function setTab(which){
+  $('#tab-t').setAttribute('aria-selected',which==='t');$('#tab-c').setAttribute('aria-selected',which==='c');$('#tab-a').setAttribute('aria-selected',which==='a');$('#tab-m').setAttribute('aria-selected',which==='m');
+}
+let navs=0;window.addEventListener('hashchange',()=>navs++);
+function goBack(){ if(navs>0)history.back(); else location.hash=/^#c\d/.test(location.hash)?'classes':''; }
+function route(){
+  const h=location.hash.slice(1);
+  app.className='wrap'+(h==='all'?' wide':'');
+  if(/^t\d+$/.test(h)){setTab('t');viewTeacher(+h.slice(1));window.scrollTo(0,0)}
+  else if(/^c\d-?\d?/.test(h)&&h.length>2){setTab('c');viewClass(h.slice(1).replace('-','/'));window.scrollTo(0,0)}
+  else if(h==='me'){setTab('m');viewMe();window.scrollTo(0,0)}
+  else if(h==='all'){setTab('a');viewAll();window.scrollTo(0,0)}
+  else if(h==='classes'){setTab('c');viewClasses();window.scrollTo(0,lastY)}
+  else{setTab('t');viewTeachers();window.scrollTo(0,lastY)}
+}
+$('#tab-t').addEventListener('click',()=>{lastY=0;location.hash='';if(!location.hash)route()});
+$('#tab-c').addEventListener('click',()=>{lastY=0;location.hash='classes'});
+$('#tab-a').addEventListener('click',()=>{lastY=0;location.hash='all'});
+$('#tab-m').addEventListener('click',()=>{lastY=0;location.hash='me'});
+window.addEventListener('hashchange',route);
+window.addEventListener('scroll',()=>{if(!/^#[tc]\d/.test(location.hash))lastY=window.scrollY},{passive:true});
+setInterval(()=>{if(/^#[tc]\d/.test(location.hash)){const y=window.scrollY;route();window.scrollTo(0,y)}},60000);
+route();
+</script>
+</body>
+</html>
